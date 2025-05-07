@@ -36,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "780436e1-90a8-4efb-8300-6398db8193d9"
+      }
+    },
+    "owner": "bogdastotel"
   }
 }

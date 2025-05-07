@@ -1,109 +1,189 @@
-import { StyleSheet, Image, Platform } from 'react-native';
+import React from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  Dimensions,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+// Sample data for explore results
+const exploreResults = [
+  {
+    id: 1,
+    title: "BMW 3 Series",
+    price: "45,000",
+    details: "2021 • Diesel • 25,000 km",
+    location: "Amsterdam, NL",
+    image: require("../../assets/images/placeholder-car.png"),
+  },
+  {
+    id: 2,
+    title: "Mercedes C-Class",
+    price: "52,000",
+    details: "2022 • Petrol • 15,000 km",
+    location: "Rotterdam, NL",
+    image: require("../../assets/images/placeholder-car.png"),
+  },
+  {
+    id: 3,
+    title: "Audi A4",
+    price: "48,000",
+    details: "2021 • Hybrid • 30,000 km",
+    location: "Utrecht, NL",
+    image: require("../../assets/images/placeholder-car.png"),
+  },
+  {
+    id: 4,
+    title: "Tesla Model 3",
+    price: "55,000",
+    details: "2022 • Electric • 15,000 km",
+    location: "The Hague, NL",
+    image: require("../../assets/images/placeholder-car.png"),
+  },
+];
 
-export default function TabTwoScreen() {
+const windowWidth = Dimensions.get("window").width;
+const columnWidth = (windowWidth - 48) / 2;
+
+export default function ExploreScreen() {
+  const router = useRouter();
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user's current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Explore</Text>
+        <TouchableOpacity style={styles.filterButton}>
+          <Ionicons name="options" size={24} color="#FFE94D" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Search Bar */}
+      <TouchableOpacity
+        style={styles.searchBar}
+        onPress={() => router.push("/search")}
+      >
+        <Ionicons name="search" size={20} color="#999" />
+        <Text style={styles.searchText}>Search cars...</Text>
+      </TouchableOpacity>
+
+      {/* Results Grid */}
+      <FlatList
+        data={exploreResults}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[styles.carCard, { width: columnWidth }]}
+            onPress={() =>
+              router.push({
+                pathname: "/car-details",
+                params: {
+                  id: item.id,
+                  title: item.title,
+                  price: item.price,
+                  details: item.details,
+                  location: item.location,
+                },
+              })
+            }
+          >
+            <Image source={item.image} style={styles.carImage} />
+            <View style={styles.carInfo}>
+              <Text style={styles.carTitle}>{item.title}</Text>
+              <Text style={styles.carPrice}>€ {item.price},-</Text>
+              <Text style={styles.carDetails}>{item.details}</Text>
+              <Text style={styles.carLocation}>{item.location}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={2}
+        columnWrapperStyle={styles.columnWrapper}
+        contentContainerStyle={styles.listContent}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
   },
-  titleContainer: {
-    flexDirection: 'row',
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "white",
+  },
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1C1C1E",
+    margin: 16,
+    marginTop: 0,
+    padding: 12,
+    borderRadius: 8,
     gap: 8,
+  },
+  searchText: {
+    color: "#999",
+    fontSize: 16,
+  },
+  filterButton: {
+    padding: 8,
+  },
+  listContent: {
+    padding: 16,
+  },
+  columnWrapper: {
+    gap: 16,
+    justifyContent: "space-between",
+  },
+  carCard: {
+    backgroundColor: "#1C1C1E",
+    borderRadius: 12,
+    overflow: "hidden",
+    marginBottom: 16,
+  },
+  carImage: {
+    width: "100%",
+    height: 120,
+    resizeMode: "cover",
+  },
+  carInfo: {
+    padding: 12,
+  },
+  carTitle: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  carPrice: {
+    color: "#FFE94D",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 4,
+  },
+  carDetails: {
+    color: "#999",
+    fontSize: 12,
+    marginTop: 4,
+  },
+  carLocation: {
+    color: "#999",
+    fontSize: 12,
+    marginTop: 4,
   },
 });
